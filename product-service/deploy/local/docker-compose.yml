@@ -12,9 +12,10 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-    volumes:
-      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    # volumes:
+      # - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
     environment:
+      - POSTGRES_DB=izitek
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:
@@ -24,7 +25,10 @@ services:
 
   products-service:
     restart: "no"
-    image: docker.io/cgayet/products-service:0.0.1
+    # image: .
+    build:
+      context: ../../ 
+      dockerfile: Dockerfile
     environment:
       - NODE_ENV=development
       - DATABASE_HOST=database

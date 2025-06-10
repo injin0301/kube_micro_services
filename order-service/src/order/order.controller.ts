@@ -3,17 +3,27 @@ import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 
+const userHeader = 'x-user-id';
+
 @Controller('order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Post()
   create(
-    @Headers('x-user-id') userId: string,
+    @Headers(userHeader) userId: string,
     @Body() createOrderDto: CreateOrderDto
   ) {
     return this.orderService.create(createOrderDto);
   }
+
+  @Get('cart')
+  getOrderCart(
+    @Headers(userHeader) userId: string,
+  ) {
+    return this.orderService.getCart(userId)
+  }
+
 
   @Get()
   findAll() {

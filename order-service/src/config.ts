@@ -8,3 +8,5 @@ export const databaseConfig = registerAs('database', () => ({
   database: process.env.DATABASE_NAME || 'postgres',
   sync: process.env.DATABASE_SYNC || 'false',
 }));
+
+export const urlCart = 'local-cart-service-1'
