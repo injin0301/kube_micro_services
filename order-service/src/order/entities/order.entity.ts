@@ -9,12 +9,16 @@ export class Order {
     @Column('uuid')
     userId: string
 
-    @Column('array')
+    @Column('jsonb')
     productList: IProduct[]
 
     @Column('int')
     totalPrice: number
     
-    @Column('string')
-    status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'CANCELLED';
+    @Column({
+        type: "enum",
+        enum: ["PENDING", "PROCESSING", "COMPLETED", "CANCELLED"],
+        default: "PENDING"
+    })
+    status: "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED",
 }

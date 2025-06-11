@@ -4,7 +4,7 @@ networks:
 
 services:
   # Postgres database
-  database:
+  database-order:
     restart: "no"
     image: postgres:16-alpine
     healthcheck:
@@ -31,7 +31,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - NODE_ENV=development
-      - DATABASE_HOST=database
+      - DATABASE_HOST=database-order
       - DATABASE_USERNAME=postgres
       - DATABASE_PASSWORD=postgres
       - DATABASE_NAME=order
@@ -41,5 +41,5 @@ services:
     networks:
       - net
     depends_on:
-      database:
+      database-order:
         condition: service_healthy
