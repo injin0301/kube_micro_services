@@ -20,5 +20,5 @@ export class Order {
         enum: ["PENDING", "PROCESSING", "COMPLETED", "CANCELLED"],
         default: "PENDING"
     })
-    status: "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED",
+    status: "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED";
 }
