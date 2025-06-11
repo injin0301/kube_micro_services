@@ -5,7 +5,7 @@ metadata:
   namespace: local
 data:
   create-order-db.sql: |
-    SELECT 'CREATE DATABASE order'
+    SELECT 'CREATE DATABASE "order"'
     WHERE NOT EXISTS (SELECT
                       FROM pg_database
                       WHERE datname = 'order')
@@ -57,6 +57,13 @@ spec:
       containers:
         - name: order-service
           image: docker.io/cgayet/order-service:0.0.1
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
           ports:
             - containerPort: 5000
               name: http

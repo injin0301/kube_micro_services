@@ -57,8 +57,15 @@ spec:
       containers:
         - name: cart-service
           image: docker.io/cgayet/cart-service:0.0.1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
           ports:
-            - containerPort: 5000
+            - containerPort: 3000
               name: http
               protocol: TCP
           envFrom:
