@@ -9,4 +9,5 @@ export const databaseConfig = registerAs('database', () => ({
   sync: process.env.DATABASE_SYNC || 'false',
 }));
 
-export const urlCart = 'http://products-service.local.svc.cluster.local'
+export const productApiUrl = 'http://products-service.local.svc.cluster.local'
+export const cartApiUrl = 'http://cart-service.local.svc.cluster.local';

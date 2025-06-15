@@ -9,11 +9,10 @@ async function bootstrap() {
     .setTitle('Order API')
     .setDescription('Gestion des commandes via le Order Service')
     .setVersion('1.0')
-    .addServer('http://localhost:5000')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('order/api', app, document);
 
   await app.listen(process.env.PORT ?? 5000);
 }

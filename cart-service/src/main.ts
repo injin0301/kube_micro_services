@@ -15,7 +15,7 @@ async function bootstrap() {
     .build();
 
   const cart = SwaggerModule.createDocument(app, configSwagger);
-  SwaggerModule.setup('api', app, cart); // Swagger accessible à l'URL /api  
+  SwaggerModule.setup('cart/api', app, cart); // Swagger accessible à l'URL /api  
 
   const configService = app.get(ConfigService);
 

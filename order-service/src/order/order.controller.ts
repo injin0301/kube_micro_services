@@ -1,5 +1,6 @@
 import { 
-  Controller, Get, Post, Param, Body, Headers 
+  Controller, Get, Post, Param, Body, Headers, 
+  Delete
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiParam, ApiHeader, ApiResponse } from '@nestjs/swagger';
 import { OrderService } from './order.service';
@@ -13,39 +14,52 @@ const userHeader = 'x-user-id';
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @Post()
-  @ApiOperation({ summary: 'Créer une commande manuellement' })
-  @ApiHeader({ name: userHeader, description: 'ID de l’utilisateur' })
-  @ApiResponse({ status: 201, description: 'Commande créée', type: Order })
-  createManual(
-    @Headers(userHeader) userId: string,
-    @Body() createOrderDto: CreateOrderDto,
-  ): Promise<Order> {
-    return this.orderService.create(createOrderDto);
-  }
-
-  @Get('cart')
+  @Get('cart/:id')
   @ApiOperation({ summary: 'Créer une commande à partir du panier' })
-  @ApiHeader({ name: userHeader, description: 'ID de l’utilisateur' })
+  @ApiHeader({
+    name: userHeader,
+    description: "ID de l'utilisateur (envoyé dans les headers)",
+    required: true,
+    schema: { type: 'string' },
+  })
+  @ApiParam({ name: 'id', description: 'ID du panier' })
   @ApiResponse({ status: 201, description: 'Commande créée depuis le panier', type: Order })
+  @ApiResponse({ status: 404, description: 'Panier non trouvé' })
   getOrderCart(
     @Headers(userHeader) userId: string,
+    @Param('id') id: string,
   ): Promise<Order> {
-    return this.orderService.getCart(userId);
+    return this.orderService.getCart(userId, id);
   }
 
-  @Get()
+  @Get('all')
   @ApiOperation({ summary: 'Lister toutes les commandes' })
+  @ApiHeader({
+    name: userHeader,
+    description: "ID de l'utilisateur (envoyé dans les headers)",
+    required: true,
+    schema: { type: 'string' },
+  })
   @ApiResponse({ status: 200, description: 'Liste des commandes', type: [Order] })
-  findAll(): Promise<Order[]> {
+  all(@Headers(userHeader) userId: string): Promise<Order[]> {
     return this.orderService.findAll();
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Récupérer une commande par ID' })
-  @ApiParam({ name: 'id', description: 'ID de la commande' })
-  @ApiResponse({ status: 200, description: 'Commande trouvée', type: Order })
-  findOne(@Param('id') id: string): Promise<Order | null> {
-    return this.orderService.findOne(id);
+  @Delete(':id')
+  @ApiOperation({ summary: 'Supprimer une commande par ID' })
+  @ApiHeader({
+    name: userHeader,
+    description: "ID de l'utilisateur (envoyé dans les headers)",
+    required: true,
+    schema: { type: 'string' },
+  })
+  @ApiParam({ name: 'id', description: 'ID de la commande à supprimer' })
+  @ApiResponse({ status: 204, description: 'Commande supprimée avec succès' })
+  @ApiResponse({ status: 404, description: 'Commande non trouvée' })
+  deleteOrder(
+    @Headers(userHeader) userId: string,
+    @Param('id') id: string
+  ): Promise<boolean> {
+    return this.orderService.deleteOrder(id);
   }
 }
