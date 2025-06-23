@@ -7,6 +7,10 @@ async function bootstrap() {
     AppModule,
     {
       transport: Transport.NATS,
+      options: {
+        servers: ['nats://nats:4222'],
+        queue: process.env.npm_package_name?.toUpperCase() ?? 'NOTIFICATION_SERVICE',
+      }
     },
   );
 

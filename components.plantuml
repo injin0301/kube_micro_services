@@ -1,0 +1,82 @@
+@startuml tp-ecommerce-services
+!define RECTANGLE_COLOR #E6F3FF
+!define SERVICE_COLOR #B3D9FF
+!define DATABASE_COLOR #FFE6CC
+!define MESSAGE_COLOR #E6FFE6
+
+title TP E-commerce Microservices Architecture
+
+' Services
+rectangle "Product Service" as PS <<service>> {
+  [Product API :3000]
+  [Stock Management]
+  database "PostgreSQL" as PSDB
+}
+
+rectangle "Cart Service" as CS <<service>> {
+  [Cart API :3000]
+  database "PostgreSQL" as CSDB
+}
+
+rectangle "Order Service" as OS <<service>> {
+  [Order API :3000]
+  [NATS Client]
+  database "PostgreSQL" as OSDB
+}
+
+rectangle "Notification Service" as NS <<service>> {
+  [Email Service]
+  [NATS Microservice]
+}
+
+' Message Broker
+cloud "NATS" as NATS {
+  queue "order.create" as Q1
+  queue "order.updated" as Q2
+  queue "order.cancelled" as Q3
+}
+
+' External Systems
+actor "Client" as CLIENT
+cloud "Email Provider" as EMAIL
+
+' Connections - HTTP APIs
+CLIENT --> PS : HTTP :3000
+CLIENT --> CS : HTTP :3000
+CLIENT --> OS : HTTP :3000
+
+' Database connections
+PS --> PSDB : TypeORM
+CS --> CSDB : TypeORM
+OS --> OSDB : TypeORM
+
+' NATS messaging
+OS --> NATS : Publish order events
+NATS --> NS : Subscribe to order events
+NS --> EMAIL : Send emails
+
+' Service interactions
+CS -.-> PS : Product validation\n(potential)
+OS -.-> CS : Cart checkout\n(potential)
+OS -.-> PS : Stock updates\n(potential)
+
+' NATS message flow details
+Q1 --> NS : order.created
+Q2 --> NS : order.updated
+Q3 --> NS : order.cancelled
+
+note right of NS
+  Notification Service listens to:
+  - order.created
+  - order.updated  
+  - order.cancelled
+  
+  And sends corresponding emails
+end note
+
+note bottom of NATS
+  Message Broker
+  Running on localhost:4222
+end note
+
+@enduml

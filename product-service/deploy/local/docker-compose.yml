@@ -3,42 +3,21 @@ networks:
     driver: bridge
 
 services:
-  # Postgres database
-  database-product:
+  product-service:
     restart: "no"
-    image: postgres:16-alpine
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready" ]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-    volumes:
-      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    ports:
-      - "8766:5432"
-    networks:
-      - net
-
-  products-service:
-    restart: "no"
-    # image: .
     build:
-      context: ../../ 
-      dockerfile: Dockerfile
+      context: ../../.
     environment:
       - NODE_ENV=development
-      - DATABASE_HOST=database-product
+      - DATABASE_HOST=database
       - DATABASE_USERNAME=postgres
       - DATABASE_PASSWORD=postgres
-      - DATABASE_NAME=products
+      - DATABASE_NAME=product_db
       - DATABASE_SSL=false
     ports:
-      - "3001:3000"
+      - "3003:3000"
     networks:
       - net
     depends_on:
-      database-product:
+      database:
         condition: service_healthy

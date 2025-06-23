@@ -6,13 +6,15 @@ import { ApiTags, ApiOperation, ApiParam, ApiHeader, ApiResponse } from '@nestjs
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { Order } from './entities/order.entity';
+import * as nats from 'nats';
+import { ClientProxy, NatsRecordBuilder } from '@nestjs/microservices';
 
 const userHeader = 'x-user-id';
 
 @ApiTags('Orders')
 @Controller('order')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) {}
+  constructor(private readonly orderService: OrderService, private client: ClientProxy) {}
 
   @Get('cart/:id')
   @ApiOperation({ summary: 'Créer une commande à partir du panier' })
@@ -61,5 +63,18 @@ export class OrderController {
     @Param('id') id: string
   ): Promise<boolean> {
     return this.orderService.deleteOrder(id);
+  }
+
+
+  @Get('/test')
+  @ApiOperation({ summary: 'Test endpoint' })
+  @ApiResponse({ status: 200, description: 'Test réussi' })
+  test(): string {
+    const headers = nats.headers()
+    headers.set('x-version', '1.0')
+
+    const record = new NatsRecordBuilder(12).setHeaders(headers).build();    
+    this.client.send('order.created', record)
+    return 'oui'
   }
 }
