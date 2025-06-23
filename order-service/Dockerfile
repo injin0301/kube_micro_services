@@ -17,7 +17,7 @@ FROM node:22-alpine AS runner
 
 WORKDIR /app
 
-ENV PORT=5000
+ENV PORT=3000
 EXPOSE $PORT
 
 USER root

@@ -1,19 +1,20 @@
 import { NestFactory } from '@nestjs/core';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const config = new DocumentBuilder()
-    .setTitle('Order API')
-    .setDescription('Gestion des commandes via le Order Service')
-    .setVersion('1.0')
-    .build();
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.NATS,
+    options: {
+      servers: ['nats://nats:4222'],
+      queue: process.env.npm_package_name?.toUpperCase() ?? 'ORDER_SERVICE',
+    }
+  });
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('order/api', app, document);
-
-  await app.listen(process.env.PORT ?? 5000);
+  await app.startAllMicroservices();
+  await app.listen(process.env.PORT ?? 3000);
 }
-bootstrap();
+
+bootstrap().then();
