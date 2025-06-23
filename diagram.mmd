@@ -1,0 +1,50 @@
+flowchart TD
+    subgraph Azure
+        AKS([Azure Kubernetes Service\nAKS])
+        ACR([Azure Container Registry\nACR])
+        AppGW([Application Gateway])
+        CosmosDB([Cosmos DB])
+        KeyVault([Key Vault])
+        Storage([Blob Storage])
+        Function([Azure Function])
+        Monitor([Azure Monitor])
+    end
+
+    subgraph Microservices
+        S1([Service 1\n*.ts])
+        S2([Service 2\n*.ts])
+        S3([Service 3\n*.ts])
+    end
+
+    AppGW --> AKS
+    AKS --> S1
+    AKS --> S2
+
+    %% AWS Icons and Services
+    subgraph AWS
+        style AWS fill:#FF9900,stroke:#232F3E,stroke-width:2px
+        EC2([<img src="https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v14.0/LATEST/AmazonEC2.png" width="30"/> EC2])
+        S3AWS([<img src="https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v14.0/LATEST/AmazonS3.png" width="30"/> S3])
+        Lambda([<img src="https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v14.0/LATEST/AWSLambda.png" width="30"/> Lambda])
+        RDS([<img src="https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v14.0/LATEST/AmazonRDS.png" width="30"/> RDS])
+    end
+
+    S1 -.-> EC2
+    S2 -.-> S3AWS
+    S3 -.-> Lambda
+    S3 -.-> RDS
+    AKS --> S3
+    S1 --> CosmosDB
+    S2 --> CosmosDB
+    S3 --> CosmosDB
+    S1 --> Storage
+    S2 --> Storage
+    S3 --> Storage
+    S1 --> KeyVault
+    S2 --> KeyVault
+    S3 --> KeyVault
+    S1 --> Function
+    S2 --> Function
+    S3 --> Function
+    AKS --> ACR
+    AKS --> Monitor
